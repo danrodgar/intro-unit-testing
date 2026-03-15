@@ -2,7 +2,7 @@
 
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
-\usepackage[utf8x]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{times}
 \usepackage{sans}
 \usepackage{graphicx}
@@ -372,7 +372,7 @@ Assertions can be used to verify the state of a program but should NOT be used t
 
 Exception handling is the process of responding to the occurrence of exceptions (usually in a graceful manner so that the execution is not interrupted). In Java, this is carried out with \texttt{try() ... catch() ... finally} statements.
 
-Although most programming languages provide assertions, unit testing is usually carried out with frameworks such as jUnit (Java) or pyest (Python). 
+Although most programming languages provide assertions, unit testing is usually carried out with frameworks such as JUnit (Java) or pytest (Python). 
 
 \end{frame}
 
@@ -392,11 +392,13 @@ Although most programming languages provide assertions, unit testing is usually 
 
 \begin{itemize}
     \item JUnit is the most popular open source unit testing framework in Java.
-    \item JUnit is a regression testing framework.
+  \item JUnit is a regression testing framework.
     \item Created in 1997 by Erich Gamma and Kent Beck.
-    \item Simple framework with a small learning curve.
-    \item Tests can be automated (facilitates regression testing). It allow us to aggregate tests via test suites.
-    \item \textit{De facto} standard, integrated with Ant, Maven, Gradle, etc. Typically run with continuous integration testing tools. 
+  \item JUnit 6 is based on the JUnit Platform and JUnit Jupiter.
+  \item JUnit Vintage is optional and deprecated, only for temporary JUnit 3/4 migration.
+  \item JUnit 6 requires Java 17 or later at runtime.
+  \item Tests can be automated and grouped via test suites.
+  \item \textit{De facto} standard, integrated with IDEs, Maven, Gradle, and CI servers.
     %\item \texttt{\url{https://www.junit.org/}}
 \end{itemize}
 
@@ -406,6 +408,49 @@ Although most programming languages provide assertions, unit testing is usually 
 \begin{block}{}
   ''Never in the field of software development have so many owed so much to so few lines of code'' (Martin Fowler)
 \end{block}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Current JUnit Setup}
+
+For the examples in this course, use a current JUnit Jupiter setup:
+
+\begin{itemize}
+  \item Java 17 or later to run the tests.
+  \item Maven Surefire 3.5+.
+  \item \texttt{org.junit:junit-bom:6.0.3} to keep JUnit modules aligned.
+  \item \texttt{org.junit.jupiter:junit-jupiter} for new tests.
+  \item Use \texttt{junit-vintage-engine} only as a temporary migration aid for JUnit 3/4 tests.
+\end{itemize}
+
+\begin{lstlisting}[language=XML,basicstyle=\tiny]
+<properties>
+  <maven.compiler.release>17</maven.compiler.release>
+</properties>
+
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.junit</groupId>
+      <artifactId>junit-bom</artifactId>
+      <version>6.0.3</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
+<dependencies>
+  <dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter</artifactId>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
+\end{lstlisting}
 
 \end{frame}
 
@@ -505,26 +550,27 @@ Although most programming languages provide assertions, unit testing is usually 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{JUnit 4}
+\subsection{JUnit 4 (Legacy)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{JUnit 4}
+\begin{frame}{JUnit 4 (Legacy)}
 
-JUnit 4 took advantage of imports and annotations included in JDK 5+.
+JUnit 4 introduced annotations and static imports and is still relevant when migrating older test suites.
 \begin{itemize}
-  \item Static imports. It allow us to make use of static variables and methods from other classes without qualifying them (name the class).
-  \item Annotations 
+  \item Static imports let us use assertion methods without qualifying the class name.
+  \item JUnit 4 uses annotations instead of extending \texttt{TestCase}.
   \begin{itemize}
-    \item Annotations are metadata that provide information to the compiler (or other tools)
-    \item JUnit 4 works with annotations instead of extending classes. There is no need for naming conventions as in previous versions but those naming patterns are still used. 
+    \item Annotations are metadata consumed by the test runner.
+    \item Naming conventions are no longer required, although they are still common.
   \end{itemize}
-  \item JUnit4 also improved the functionality with annotations
+  \item Common legacy annotations include:
   \begin{itemize}
     \item Timeouts: \texttt{@Test(timeout=1000)}...
     \item Testing exceptions: \texttt{@Test(expected=DBConnectException.class)} 
     \item Ignore a test: \texttt{@Ignore("Ignore the following test for now")}
   \end{itemize}
+  \item Legacy only: in JUnit Jupiter prefer \texttt{assertTimeout()}, \texttt{assertThrows()}, and \texttt{@Disabled}.
 \end{itemize}
 
 \end{frame}
@@ -532,7 +578,7 @@ JUnit 4 took advantage of imports and annotations included in JDK 5+.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Junit 4 -- Annotations}
+\begin{frame}{JUnit 4 -- Annotations}
 
 \begin{itemize}
   \item \texttt{@Before} A method marked with \texttt{@Before} will be run before every test method. It is used to prepare the tests environment.
@@ -546,17 +592,17 @@ JUnit 4 took advantage of imports and annotations included in JDK 5+.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{JUnit 5}
+\subsection{JUnit Jupiter (JUnit 5 and 6)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Junit 5 -- Annotations}
+\begin{frame}{JUnit Jupiter -- Annotations}
 
   \begin{itemize}
     \item \texttt{@BeforeEach} A method marked with \texttt{@BeforeEach} will be run before every test method. It is used to prepare the tests environment.
     \item \texttt{@AfterEach} It will be run after every test method.
     \item \texttt{@Test} Identifies a test method.
-    \item \texttt{@Ignore} The method under test will be ignored (to disable some tests which we do not want to repeat)
+    \item \texttt{@Disabled} Disables a test or a test class.
     \item \texttt{@AfterAll} Run only once after all test methods
     \item \texttt{@BeforeAll} Run only once before all test methods
     \end{itemize}
@@ -565,7 +611,7 @@ JUnit 4 took advantage of imports and annotations included in JDK 5+.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Junit 5 -- Assert methods}
+\begin{frame}{JUnit Jupiter -- Assert methods}
 
 Assert methods are used to comparison between an expected value and an actual value to determine the success or failure of a test.
   
@@ -581,6 +627,8 @@ For example:
         \item \texttt{assertSame(...)} 
         \item \texttt{assertFalse(boolean condition)}
         \item \texttt{assertTrue(boolean condition)}
+  \item \texttt{assertThrows(Exception.class, executable)}
+  \item \texttt{assertAll(...)}
         %\item \texttt{assertNull(...)}
         %\item \texttt{assertNotNull(...)}
         \item Etc.
@@ -594,7 +642,7 @@ Further information in the API: \texttt{org.junit.jupiter.api.Assertions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Junit 5 -- New functionality I}
+\begin{frame}{JUnit Jupiter -- New functionality I}
 
   \begin{itemize}
     \item Custom display names - The \texttt{@DisplayName} annotation allows us to provide custom display names for test classes and methods, which can include spaces, special characters, and emojis.
@@ -610,7 +658,7 @@ Further information in the API: \texttt{org.junit.jupiter.api.Assertions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Junit 5 -- New functionality II}
+\begin{frame}{JUnit Jupiter -- New functionality II}
 
   \begin{itemize}
     \item Dynamic tests - JUnit Jupiter introduces dynamic tests which are generated at runtime by a factory method annotated with the \texttt{@TestFactory} annotation.
@@ -659,26 +707,25 @@ Further information in the API: \texttt{org.junit.jupiter.api.Assertions}
 
 \begin{lstlisting}[language=Java,basicstyle=\scriptsize]
 public class ComplexNumber {
-    private double fReal;
-    private double fImaginary;
+  private double realPart;
+  private double imagPart;
 
   public ComplexNumber(double re, double im) {
-    fReal = re;
-    fImaginary = im;
+    realPart = re;
+    imagPart = im;
   }
 
-  public double getReal() {
-    return fReal;
+  public double getRealPart() {
+    return realPart;
   }
 
-  public double getImaginary() {
-    return fImaginary;
+  public double getImaginaryPart() {
+    return imagPart;
   }
-}
 
 public ComplexNumber add(ComplexNumber c) {
-  return new ComplexNumber(getReal() + c.getReal(), 
-                           getImaginary() + c.getImaginary());
+  return new ComplexNumber(getRealPart() + c.getRealPart(),
+                           getImaginaryPart() + c.getImaginaryPart());
 }
 \end{lstlisting}
 
@@ -690,8 +737,10 @@ public ComplexNumber add(ComplexNumber c) {
 
 \begin{lstlisting}[language=Java,basicstyle=\scriptsize]
 public ComplexNumber multiply(ComplexNumber c) {
-  double re = getReal() * c.getReal() - getImaginary() * c.getImaginary();
-  double im = getImaginary() * c.getReal() + getReal() * c.getImaginary();
+  double re = getRealPart() * c.getRealPart()
+           - getImaginaryPart() * c.getImaginaryPart();
+  double im = getImaginaryPart() * c.getRealPart()
+           + getRealPart() * c.getImaginaryPart();
   return new ComplexNumber(re, im);
 }
 
@@ -699,11 +748,12 @@ public ComplexNumber multiply(ComplexNumber c) {
 public boolean equals(Object anObject) {
   if (anObject instanceof ComplexNumber) {
     ComplexNumber c = (ComplexNumber) anObject;
-    return ((c.getReal() == getReal()) && 
-            (c.getImaginary() == getImaginary()));
+    return ((c.getRealPart() == getRealPart()) &&
+            (c.getImaginaryPart() == getImaginaryPart()));
   } else
     return false;
   }
+}
 }
 \end{lstlisting}
 
@@ -794,16 +844,10 @@ Now you can view your test class in the test source folder. Extract from test cl
 \begin{center}
 \begin{lstlisting}[language=Java,basicstyle=\scriptsize]
 public class ComplexNumberTest {
-  @BeforeClass
-  public static void setUpBeforeClass()
-
-  @AfterClass
-  public static void tearDownAfterClass()
-
-  @Before
+  @BeforeEach
   public void setUp()
 
-  @After
+  @AfterEach
   public void tearDown()
   
   ...
@@ -843,18 +887,17 @@ public class ComplexNumberTest {
 %\end{center}
 %\end{frame}
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[fragile]
 
-We can write some tests that will start with the annotation \texttt{@Before} for the \texttt{setUp()} method as follows.
+We can write some tests that start with the annotation \texttt{@BeforeEach} for the \texttt{setUp()} method as follows.
 
 \begin{lstlisting}[language=Java,basicstyle=\tiny]
-@Before
+@BeforeEach
 public void setUp() throws Exception {
-  ComplexNumber cOneZero = new ComplexNumber(1, 0);
-  ComplexNumber cZeroOne = new ComplexNumber(0, 1);
-  ComplexNumber cOneOne = new ComplexNumber(1, 1);
+  cOneZero = new ComplexNumber(1, 0);
+  cZeroOne = new ComplexNumber(0, 1);
+  cOneOne = new ComplexNumber(1, 1);
 }
 \end{lstlisting}
 
@@ -866,10 +909,10 @@ This method is executed before each test case is run. It is typically used to cr
 
 \begin{frame}[fragile]
 
-  We can destroy all previously created classes with the annotation \texttt{@After} before a method, usually named \texttt{tearDown()}.
+  We can destroy all previously created classes with the annotation \texttt{@AfterEach} before a method, usually named \texttt{tearDown()}.
   
   \begin{lstlisting}[language=Java,basicstyle=\tiny]
-  @After
+  @AfterEach
   public void tearDown() throws Exception {
     cOneZero = null;
     cZeroOne = null;
@@ -889,15 +932,13 @@ Now we can write unit tests:
 
 \begin{lstlisting}[language=Java,basicstyle=\tiny]
   @Test  
-  public void testGetReal() {
-    System.out.println("getReal");
+  public void testGetRealPart() {
     double expResult = 0.0;
-    double result = cZeroOne.getReal();
+    double result = cZeroOne.getRealPart();
     assertEquals(expResult, result);
   }
   @Test
   public void testAdd() {
-    System.out.println("add");
     ComplexNumber result = cZeroOne.add(cOneZero);
     assertEquals(cOneOne, result);
   }
@@ -910,13 +951,11 @@ Now we can write unit tests:
 \begin{lstlisting}[language=Java,basicstyle=\tiny]
   @Test
   public void testMultiply() {
-    System.out.println("multiply");
     ComplexNumber result = cZeroOne.multiply(cOneZero);
     assertEquals(cZeroOne, result);
   }
   @Test
   public void testEquals() {
-  System.out.println("equals");
   boolean expResult = false;
   boolean result = cZeroOne.equals(cOneZero);
   assertEquals(expResult, result);
@@ -952,7 +991,7 @@ We usually run the test with IDEs and we will see something similar to the follo
 
 \begin{frame}[fragile]{Suites}
 
-Run different sets of unit tests
+Run different sets of unit tests with the JUnit Platform suite engine.
 
 Using \texttt{@Suite} annotation
 
@@ -966,7 +1005,7 @@ import org.junit.platform.suite.api.Suite;
 
 @IncludeTags("production")
 @Suite
-public class JUnit5TestSuiteExample {
+public class JUnitSuiteExample {
 }
 \end{lstlisting}
 
@@ -992,15 +1031,15 @@ public class JUnit5TestSuiteExample {
   
   \texttt{boolean result = instance.checkCoefficientsAreOk();}
   
-  This is tested with the annotation \texttt{@Test(expected=CoefficientsException.class)}.
+    In JUnit Jupiter, this is tested with \texttt{assertThrows()}.
   
   \begin{lstlisting}[language=JAVA,basicstyle=\scriptsize]
-      @Test(expected=CoefficientsException.class)
-      public void testCheckCoefficientsAreOkException() throws CoefficientsException {
-          System.out.println("checkCoefficientsAreOk with Exception raised");
-          QuadraticEquation instance;
-          instance = new QuadraticEquation(0,1,1);
-          boolean result = instance.checkCoefficientsAreOk();
+      @Test
+      void testCheckCoefficientsAreOkException() {
+        QuadraticEquation instance = new QuadraticEquation(0,1,1);
+
+        assertThrows(CoefficientsException.class,
+          () -> instance.checkCoefficientsAreOk());
       }
   \end{lstlisting}
   
@@ -1057,41 +1096,30 @@ In general private methods are not tested directly (they are tested indirectly t
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}{Parametrized tests}
+\begin{frame}{Parameterized tests}
 
-The parametrized test is an automated test in which the parameters change automatically.
+A parameterized test is an automated test in which the arguments change automatically.
 
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}[fragile]{Parametrized tests - Example}
+\begin{frame}[fragile]{Parameterized tests - Example}
 
 \begin{lstlisting}[language=Java,basicstyle=\tiny]
-import static org.junit.Assert.assertEquals;
-import java.util.Arrays;
-import java.util.Collection;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//@RunWith(MockitoJUnitRunner.class)
-@RunWith(Parameterized.class)
-public class QuadraticEquationparTest {
-  private QuadraticEquation qe;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-  private Double coeficient;
+public class QuadraticEquationParTest {
 
-  //Constructor
-  public QuadraticEquationparTest(Double coeficient) {
-    this.coeficient = coeficient;
+  @ParameterizedTest
+  @ValueSource(doubles = {1.0, 2.0, 3.0, 4.0, 14.0})
+  void checkCoefficientsAreOk(double coefficient) throws Exception {
+    QuadraticEquation qe = new QuadraticEquation(coefficient, 6.0, 8.0);
+    assertTrue(qe.checkCoefficientsAreOk());
   }
-
-  @Parameters //Definition of the parameters.
-  public static Collection<Double[]> data() {
-    Double[][] data = new Double[][] { {1.0}, {2.0}, {3.0}, {4.0} , {14.0} };
-  return Arrays.asList(data);
 }
 \end{lstlisting}
 \end{frame}
@@ -1101,13 +1129,11 @@ public class QuadraticEquationparTest {
 
 \begin{frame}[fragile]
 \begin{lstlisting}[language=Java,basicstyle=\tiny]
-@Test
-public void checkCoefficientsAreOk() throws Exception {
-  System.out.println("Coeficients");
-  boolean expResult = true;
-  qe = new QuadraticEquation(coeficient,6.0,8.0);
-  boolean result = qe.checkCoefficientsAreOk();
-  assertEquals(expResult, result);
+@ParameterizedTest(name = "a = {0} should be valid")
+@ValueSource(doubles = {1.0, 2.0, 3.0, 4.0, 14.0})
+void checkCoefficientsAreOk(double coefficient) throws Exception {
+  QuadraticEquation qe = new QuadraticEquation(coefficient, 6.0, 8.0);
+  assertTrue(qe.checkCoefficientsAreOk());
 }
 \end{lstlisting}
 \end{frame}
@@ -1209,13 +1235,809 @@ Manually, it is always possible to include the \texttt{.jar} file into your proj
 \end{frame}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{BDD and Cucumber}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Behaviour-Driven Development}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{What is BDD?}
+
+\alert{Behaviour-Driven Development (BDD)} is an agile development practice that encourages collaboration between developers, QA, and business stakeholders.
+
+\begin{itemize}
+  \item Derived from TDD --- shifts focus from \emph{how} to \emph{what} the system should do.
+  \item Tests are written in plain natural language close to acceptance criteria.
+  \item Bridges the gap between business requirements and executable tests.
+  \item The most popular BDD framework for Java is \alert{Cucumber}.
+\end{itemize}
+
+\begin{block}{Key idea}
+  Scenarios written in \emph{Gherkin} become both living documentation and automated tests.
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Gherkin Syntax}
+
+Gherkin is a plain-English DSL for describing expected behaviour.
+
+\begin{lstlisting}[language={}]
+Feature: Search UAH degrees
+
+  Scenario: User navigates to degrees page
+    Given the user is located in the index page
+    When  the user enters studies section
+    And   the user clicks in the degree section
+    Then  the page with the degrees is shown
+\end{lstlisting}
+
+\begin{itemize}
+  \item \texttt{Feature} --- groups related scenarios.
+  \item \texttt{Scenario} --- a single concrete test case.
+  \item \texttt{Given / When / Then / And} --- context, action, and expected outcome.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Cucumber}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Cucumber}
+
+\begin{block}{}
+  \centering \url{https://cucumber.io/}
+\end{block}
+
+\begin{itemize}
+  \item Reads \texttt{.feature} files written in Gherkin.
+  \item Each step is matched by a \alert{step definition} --- a Java method annotated with \texttt{@Given}, \texttt{@When}, or \texttt{@Then}.
+  \item Integrates with JUnit Platform via \texttt{cucumber-junit-platform-engine}.
+  \item Can be combined with Selenium or Playwright to drive web UI scenarios.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Cucumber -- Maven Setup}
+
+\begin{lstlisting}[language=XML,basicstyle=\tiny]
+<dependencies>
+  <dependency>
+    <groupId>io.cucumber</groupId>
+    <artifactId>cucumber-java</artifactId>
+    <version>7.20.1</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.cucumber</groupId>
+    <artifactId>cucumber-junit-platform-engine</artifactId>
+    <version>7.20.1</version>
+    <scope>test</scope>
+  </dependency>
+  <dependency>
+    <groupId>org.junit.platform</groupId>
+    <artifactId>junit-platform-suite</artifactId>
+    <scope>test</scope>
+  </dependency>
+</dependencies>
+\end{lstlisting}
+
+Feature files must be placed under \texttt{src/test/resources/features/} so Maven copies them to the classpath.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Cucumber -- Step Definitions}
+
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize]
+public class SearchSteps {
+  private WebDriver driver;
+
+  @Given("the user is located in the index page")
+  public void userIsInIndexPage() {
+    driver = new FirefoxDriver();
+    driver.navigate().to("https://uah.es/es/");
+  }
+
+  @When("the user enters studies section")
+  public void userEnterStudySection() {
+    driver.findElement(By.linkText("ESTUDIOS")).click();
+  }
+
+  @Then("the page with the degrees is shown")
+  public void degreePage() {
+    String title = driver.findElement(
+                     By.linkText("Grados")).getText();
+    Assertions.assertEquals("Grados", title);
+  }
+}
+\end{lstlisting}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Cucumber -- JUnit Platform Runner}
+
+A plain class annotated with \texttt{@Suite} replaces the legacy \texttt{@RunWith(Cucumber.class)} runner.
+
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize]
+@Suite
+@IncludeEngines("cucumber")
+@SelectClasspathResource("features")
+@ConfigurationParameter(
+    key   = "cucumber.glue",
+    value = "steps")
+public class RunCucumberTest {}
+\end{lstlisting}
+
+\begin{itemize}
+  \item \texttt{@SelectClasspathResource} points to the features folder on the classpath.
+  \item \texttt{cucumber.glue} is the package containing step definitions.
+  \item No \texttt{main} method or subclass needed.
+\end{itemize}
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Web UI Testing}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Selenium WebDriver}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Selenium WebDriver}
+
+\begin{block}{}
+  \centering \url{https://www.selenium.dev/}
+\end{block}
+
+\begin{itemize}
+  \item Industry-standard library for automating real browsers (Chrome, Firefox, Edge, Safari).
+  \item Controls browsers through their native WebDriver protocols.
+  \item Since \textbf{Selenium 4.6}, \alert{Selenium Manager} is built in --- no manual driver download needed.
+  \item Widely used for end-to-end acceptance testing and regression testing.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Selenium -- Headless Example}
+
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize]
+@Test
+void headlessChromeTest() {
+  ChromeOptions options = new ChromeOptions();
+  options.addArguments("--headless"); // no visible window
+
+  WebDriver driver = new ChromeDriver(options);
+  driver.get("https://escuelapolitecnica.uah.es/");
+  System.out.println(driver.getTitle());
+  driver.quit();
+}
+\end{lstlisting}
+
+\begin{itemize}
+  \item Selenium Manager automatically downloads \texttt{chromedriver} on first run.
+  \item Add \texttt{selenium-java:4.27.0} to the Maven dependencies.
+  \item Run with: \texttt{mvn test -Drun.selenium=true}
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Playwright}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Why Playwright?}
+
+\begin{columns}
+  \column{0.5\textwidth}
+  \textbf{Selenium WebDriver}
+  \begin{itemize}\small
+    \item Mature, large ecosystem
+    \item Multiple language bindings
+    \item Manual waits often needed
+    \item Verbose setup
+  \end{itemize}
+  \column{0.5\textwidth}
+  \textbf{Playwright}
+  \begin{itemize}\small
+    \item Auto-waiting built-in
+    \item Browser binaries self-managed
+    \item Modern, concise API
+    \item Chromium, Firefox, WebKit
+  \end{itemize}
+\end{columns}
+
+\vspace{0.5em}
+\centering \url{https://playwright.dev/java/}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Playwright Example (Java + JUnit)}
+
+\begin{lstlisting}[language=Java,basicstyle=\tiny]
+@Test
+void testUniversityLandingPageTitle() {
+  Assumptions.assumeTrue(
+    Boolean.parseBoolean(System.getProperty("run.playwright", "false")));
+
+  try (Playwright pw = Playwright.create()) {
+    Browser browser = pw.chromium().launch(
+      new BrowserType.LaunchOptions().setHeadless(true));
+
+    Page page = browser.newPage();
+    page.navigate("https://escuelapolitecnica.uah.es/");
+    assertTrue(page.title().toLowerCase().contains("escuela"));
+    browser.close();
+  }
+}
+\end{lstlisting}
+
+Run with: \texttt{mvn test -Drun.playwright=true}
+
+\end{frame}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Code Coverage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{What is Code Coverage?}
+
+\alert{Code coverage} is a metric that measures what percentage of the source code is exercised by the test suite.
+
+\begin{itemize}
+  \item High coverage increases confidence that defects will be detected.
+  \item Low coverage reveals areas of the code that are never tested.
+  \item Coverage is \textbf{necessary but not sufficient} --- 100\% coverage does not guarantee correctness.
+\end{itemize}
+
+\begin{block}{Common coverage criteria}
+  \begin{itemize}
+    \item \alert{Line / Statement coverage} --- was each executable statement reached?
+    \item \alert{Branch coverage} --- was each branch of every conditional taken?
+    \item \alert{Method coverage} --- was each method called at least once?
+  \end{itemize}
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{JaCoCo}
+
+\begin{block}{}
+  \centering \url{https://www.jacoco.org/}
+\end{block}
+
+\alert{JaCoCo} (Java Code Coverage) is the standard code-coverage library for Java.
+
+\begin{itemize}
+  \item Instruments bytecode at runtime using a Java agent --- no source changes needed.
+  \item Generates reports in HTML, XML, and CSV.
+  \item Integrates with Maven, Gradle, and CI platforms (SonarQube, GitHub Actions).
+  \item Reports line, branch, method, class, and cyclomatic-complexity metrics.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{JaCoCo -- Maven Configuration}
+
+\begin{lstlisting}[language=XML,basicstyle=\tiny]
+<plugin>
+  <groupId>org.jacoco</groupId>
+  <artifactId>jacoco-maven-plugin</artifactId>
+  <version>0.8.14</version>
+  <executions>
+    <execution>
+      <!-- attaches the JaCoCo agent before tests run -->
+      <goals><goal>prepare-agent</goal></goals>
+    </execution>
+    <execution>
+      <id>report</id>
+      <phase>test</phase>
+      <goals><goal>report</goal></goals>
+    </execution>
+  </executions>
+</plugin>
+\end{lstlisting}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{JaCoCo -- Generating the Report}
+
+After adding the plugin, run:
+
+\begin{lstlisting}[language={}]
+mvn test
+\end{lstlisting}
+
+The HTML report is generated at:
+
+\begin{lstlisting}[language={}]
+target/site/jacoco/index.html
+\end{lstlisting}
+
+\begin{itemize}
+  \item \textcolor{green!60!black}{Green lines} --- covered by tests.
+  \item \textcolor{red}{Red lines} --- not covered.
+  \item \textcolor{orange}{Yellow diamonds} --- branch partially covered.
+  \item The report shows per-class, per-method, and per-line metrics.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{JaCoCo -- Enforcing a Minimum Coverage}
+
+JaCoCo can \emph{fail the build} if coverage falls below a threshold:
+
+\begin{lstlisting}[language=XML,basicstyle=\tiny]
+<execution>
+  <id>check</id>
+  <goals><goal>check</goal></goals>
+  <configuration>
+    <rules>
+      <rule>
+        <element>BUNDLE</element>
+        <limits>
+          <limit>
+            <counter>LINE</counter>
+            <value>COVEREDRATIO</value>
+            <minimum>0.80</minimum>
+          </limit>
+        </limits>
+      </rule>
+    </rules>
+  </configuration>
+</execution>
+\end{lstlisting}
+
+This enforces at least 80\% line coverage across the project.
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Mutation Testing}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{The Problem with Coverage}
+
+Code coverage measures \emph{execution} --- not \emph{quality} of assertions.
+
+\begin{exampleblock}{Counter-example: 100\% line coverage, zero assertions}
+\begin{center}
+\texttt{@Test void testAdd() \{ calc.add(1, 1); \}}
+\end{center}
+Every line of \texttt{add()} is executed, but the result is never checked.
+\end{exampleblock}
+
+\begin{itemize}
+  \item A test that never asserts anything will achieve full coverage.
+  \item \alert{Mutation testing} solves this by verifying your tests actually \emph{detect} faults.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{What is Mutation Testing?}
+
+\begin{block}{Idea}
+  Automatically introduce a small \alert{mutation} (bug) into the source code, then re-run the test suite. If at least one test fails, the mutant is \alert{killed}. If all tests still pass, the mutant \alert{survived}.
+\end{block}
+
+\vspace{0.5em}
+Common mutation operators:
+
+\begin{itemize}
+  \item Replace \texttt{+} with \texttt{-}, \texttt{*}, \texttt{/}.
+  \item Replace \texttt{>} with \texttt{>=}, \texttt{==}.
+  \item Negate conditions: \texttt{if (b == 0)} $\rightarrow$ \texttt{if (b != 0)}.
+  \item Remove a method call or \texttt{return} statement.
+\end{itemize}
+
+\vspace{0.5em}
+The \alert{mutation score} $= \dfrac{\text{killed mutants}}{\text{total mutants}} \times 100\%$
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Mutation Score vs.~Line Coverage}
+
+\begin{center}
+\begin{tabular}{lcc}
+  \hline
+  Scenario & Line coverage & Mutation score \\
+  \hline
+  No assertions     & 100\% & $\approx$0\%   \\
+  Weak assertions   & 90\%  & 40--60\%        \\
+  Strong assertions & 90\%  & $>$80\%         \\
+  \hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+\begin{itemize}
+  \item High coverage + low mutation score $\Rightarrow$ tests are \emph{incomplete}.
+  \item Aim for a mutation score $\geq 80\%$ for critical business logic.
+  \item Some mutants are \emph{equivalent} (semantically identical to the original) and cannot be killed --- these are excluded from the score.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{PIT (Pitest)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{PIT -- Practical Mutation Testing for Java}
+
+\begin{block}{}
+  \centering \url{https://pitest.org/}
+\end{block}
+
+\begin{itemize}
+  \item \alert{PIT} (Pitest) is the standard mutation testing tool for Java.
+  \item Instruments bytecode --- no source changes needed.
+  \item Integrates with Maven and Gradle.
+  \item Much faster than earlier tools: reruns only tests \emph{relevant} to each mutant.
+  \item Requires the \texttt{pitest-junit5-plugin} add-on for JUnit Jupiter/Platform.
+  \item Generates an HTML report at \texttt{target/pit-reports/}.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{PIT -- Maven Configuration}
+
+\begin{lstlisting}[language=XML,basicstyle=\tiny]
+<plugin>
+  <groupId>org.pitest</groupId>
+  <artifactId>pitest-maven</artifactId>
+  <version>1.17.3</version>
+  <dependencies>
+    <dependency>
+      <groupId>org.pitest</groupId>
+      <artifactId>pitest-junit5-plugin</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+  </dependencies>
+  <configuration>
+    <targetClasses>
+      <param>calculator.*</param>
+    </targetClasses>
+    <targetTests>
+      <param>calculator.*</param>
+    </targetTests>
+  </configuration>
+</plugin>
+\end{lstlisting}
+
+\textbf{Note:} add \texttt{junit-platform-launcher} as a \texttt{test} dependency from the BOM to keep all JUnit Platform jars aligned; otherwise PIT's bundled launcher may conflict.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{PIT -- Running and Reading the Report}
+
+Run mutation testing on the \texttt{PITExample}:
+
+\begin{lstlisting}[language={}]
+cd code/PITExample
+mvn test-compile org.pitest:pitest-maven:mutationCoverage
+\end{lstlisting}
+
+Open the HTML report:
+
+\begin{lstlisting}[language={}]
+target/pit-reports/<timestamp>/index.html
+\end{lstlisting}
+
+\begin{itemize}
+  \item \textcolor{green!60!black}{Green highlight} --- mutant was killed (test caught the bug).
+  \item \textcolor{red}{Red highlight} --- mutant survived (\emph{test gap found}).
+  \item Each survived mutant points to a missing or weak assertion.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{PIT -- Example: Surviving Mutant}
+
+The \texttt{Calculator} class has a \texttt{subtract} method:
+
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize]
+public double subtract(double a, double b) {
+    return a - b;
+}
+\end{lstlisting}
+
+\texttt{CalculatorTest} has no test for \texttt{subtract}. PIT will replace \texttt{-} with \texttt{+}:
+
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize]
+// mutant: return a + b;
+\end{lstlisting}
+
+All tests still pass $\Rightarrow$ \alert{mutant survived}. PIT flags this as a test gap.
+
+Running PIT on the \texttt{PITExample} produces:
+\texttt{Generated 11 mutations --- Killed 9 (82\%)}
+
+The 2 surviving mutants indicate missing assertions ---
+adding a \texttt{subtract} test will push the score to 100\%.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Testing Strategy and Quality}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Testing Levels and Test Pyramid}
+
+Not all tests should run at the same level.
+
+\begin{itemize}
+  \item \alert{Unit tests}: fast, isolated, many.
+  \item \alert{Integration tests}: verify collaboration between components.
+  \item \alert{End-to-end tests}: validate user flows in a real environment.
+\end{itemize}
+
+\begin{block}{Test pyramid guideline}
+  Prefer many unit tests, fewer integration tests, and a small set of E2E tests.
+\end{block}
+
+\begin{itemize}
+  \item In this repository: \texttt{calculatorExample} and \texttt{complexNumber} are unit-focused.
+  \item \texttt{CucumberTestExample}, \texttt{SeleniumTestExample}, and \texttt{PlaywrightExample} are UI/E2E-oriented.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{What Makes a Good Test? (FIRST + AAA)}
+
+\textbf{FIRST} properties:
+\begin{itemize}
+  \item \textbf{F}ast
+  \item \textbf{I}ndependent
+  \item \textbf{R}epeatable
+  \item \textbf{S}elf-validating
+  \item \textbf{T}imely
+\end{itemize}
+
+Recommended structure: \alert{AAA} (Arrange, Act, Assert)
+
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize]
+@Test
+void divideByZeroThrows() {
+  // Arrange
+  Calculator calc = new Calculator();
+  // Act + Assert
+  assertThrows(ArithmeticException.class,
+      () -> calc.divide(1, 0));
+}
+\end{lstlisting}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Designing Better Test Cases}
+
+Three techniques with strong payoff:
+
+\begin{itemize}
+  \item \alert{Equivalence partitioning}: divide input space into representative classes.
+  \item \alert{Boundary value analysis}: test min/max and just inside/outside.
+  \item \alert{Positive and negative paths}: valid scenarios and failure scenarios.
+\end{itemize}
+
+Example for \texttt{divide(a,b)}:
+\begin{itemize}
+  \item Typical case: \texttt{divide(10, 2)}
+  \item Boundary/precision case: \texttt{divide(10, 3)}
+  \item Error path: \texttt{divide(1, 0)}
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{Property-Based Testing}
+
+Instead of only hand-picked examples, define \alert{properties} that should hold
+for many generated inputs.
+
+\begin{lstlisting}[language=Java,basicstyle=\scriptsize]
+@Property
+void addIsCommutative(@ForAll int a, @ForAll int b) {
+    assertEquals(calc.add(a, b), calc.add(b, a));
+}
+
+@Property
+void addZeroIsIdentity(@ForAll int a) {
+    assertEquals(a, calc.add(a, 0));
+}
+\end{lstlisting}
+
+\begin{itemize}
+  \item On failure, the framework applies \alert{shrinking} to find the smallest
+        counterexample.
+  \item Java: \textbf{jqwik}. \quad Python: \textbf{Hypothesis}.
+  \item Useful for algebraic laws, invariants, and round-trip properties.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Avoiding Flaky Tests}
+
+Flaky tests fail intermittently without code changes.
+
+\begin{itemize}
+  \item Avoid fixed sleeps; use explicit waits or Playwright auto-waiting.
+  \item Keep test data deterministic and isolated.
+  \item Do not depend on execution order.
+  \item Control environment differences (browser, locale, timezone).
+  \item For optional local browser runs, gate tests with:
+  \texttt{-Drun.selenium=true}, \texttt{-Drun.playwright=true}.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Test Doubles: Vocabulary}
+
+\begin{itemize}
+  \item \alert{Dummy}: passed around, never used.
+  \item \alert{Stub}: provides predefined responses.
+  \item \alert{Mock}: verifies interactions (calls, arguments, order).
+  \item \alert{Spy}: wraps a real object and observes calls.
+  \item \alert{Fake}: simplified working implementation (in-memory DB, etc.).
+\end{itemize}
+
+Use doubles to isolate the class under test and speed up feedback.
+
+In this repository:
+\begin{itemize}
+  \item \texttt{MockitoATM} demonstrates Mockito-based mocks.
+  \item \texttt{EasyMockExample} demonstrates EasyMock interactions.
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{CI Testing Strategy}
+
+Suggested cadence in CI:
+
+\begin{enumerate}
+  \item Every commit: unit tests + JaCoCo.
+  \item Pull requests: unit + selected UI smoke tests.
+  \item Nightly or pre-release: full UI + PIT mutation testing.
+\end{enumerate}
+
+\begin{block}{Why this split?}
+  Fast feedback for developers, deeper quality checks on a scheduled pipeline.
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]{CI Commands}
+
+Use lightweight commands per stage:
+
+\begin{lstlisting}[language={}]
+# fast feedback (every commit)
+cd code/calculatorExample
+mvn test
+
+# deeper feedback (scheduled)
+cd code/PITExample
+mvn test-compile org.pitest:pitest-maven:mutationCoverage
+\end{lstlisting}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{Automated Testing: What to Automate First}
+
+Automation should start with checks that are frequent, fast, and objective:
+
+\begin{itemize}
+  \item Run unit tests on every commit or before every push.
+  \item Automate repeatable quality gates: compilation, linting, and coverage thresholds.
+  \item Keep the fast test suite deterministic to avoid noisy failures.
+  \item Reserve slower end-to-end or mutation suites for scheduled runs.
+\end{itemize}
+
+\begin{block}{Rule of thumb}
+Automate \alert{execution} aggressively; automate \alert{judgment} carefully.
+\end{block}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{AI/Agents in Testing: Useful and Safe}
+
+AI tools can accelerate testing work, but they do not replace engineering judgment.
+
+\begin{itemize}
+  \item Good use cases: generate test skeletons, propose edge cases, suggest property tests.
+  \item Human review is mandatory: validate assertions, names, and intent.
+  \item Watch for risks: plausible but wrong tests, over-mocking, brittle test logic.
+\end{itemize}
+
+Practical policy:
+\begin{itemize}
+  \item \alert{Automate execution}: yes.
+  \item \alert{Automate authoring}: partially.
+  \item \alert{Automate final quality decisions}: no.
+\end{itemize}
+
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}[fragile]{Summary}
 
-JUnit is a must in software engineering. 
+JUnit (or an equivalent framework) is standard practice in Java testing.
 
 It can be used in combination with other frameworks such as Mockito, EasyMock, etc.
 

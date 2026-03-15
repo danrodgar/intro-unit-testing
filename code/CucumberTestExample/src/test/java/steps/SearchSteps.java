@@ -3,7 +3,7 @@ package steps;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -13,7 +13,6 @@ import org.sikuli.script.ImagePath;
 import org.sikuli.script.Pattern;
 import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenImage;
-import org.testng.Assert;
 
 import java.net.URL;
 import java.util.Locale;
@@ -36,7 +35,6 @@ public class SearchSteps {
         driverChrome.manage().window().maximize();
         driverChrome.manage().timeouts().implicitlyWait(120, TimeUnit.MILLISECONDS);*/
 
-        System.setProperty("webdriver.gecko.driver", "drivers/geckodriver.exe");
         driverFirefox = new FirefoxDriver();
         driverFirefox.navigate().to("https://uah.es/es/");
     }
@@ -102,7 +100,7 @@ public class SearchSteps {
         //String titleChrome = driverChrome.findElement(By.linkText("Grados")).getText();
         String titleFirefox = driverFirefox.findElement(By.linkText("Grados")).getText();
         //Assert.assertEquals(titleChrome, "Grados");
-        Assert.assertEquals(titleFirefox, "Grados");
+        Assertions.assertEquals("Grados", titleFirefox);
     }
 
     //Verify if the final page from EPS Covid-19 Information correspond to what it is look for
@@ -112,6 +110,6 @@ public class SearchSteps {
         //String titleChrome = driverChrome.findElement(By.linkText("Escuela Politécnica Superior")).getText();
         String titleFirefox = driverFirefox.findElement(By.linkText("Escuela Politécnica Superior")).getText();
         //Assert.assertEquals(titleChrome, "Escuela Politécnica Superior");
-        Assert.assertEquals(titleFirefox, ("Escuela Politécnica Superior"));
+        Assertions.assertEquals("Escuela Politécnica Superior", titleFirefox);
     }
 }

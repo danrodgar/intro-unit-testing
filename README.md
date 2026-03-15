@@ -1,73 +1,87 @@
 # Introduction to Unit Testing
 
-#### - assertions
-- [CK](https://github.com/danrodgar/IntroUnitTesting/actions/workflows/metrics.yml) *(CK_report)*
-- [CKJM](https://github.com/danrodgar/IntroUnitTesting/actions/workflows/metrics.yml) *(Step 7.1)*
+This repository contains teaching examples for unit testing and test quality in Java.
 
-#### - calculatorExample ![codecov](.github/badges/badge_calculatorExample.svg)
-- JUnit
-- [Maven](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml)
-- [Jacoco](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml) *(jacoco-report-calculatorExample)*
-- [SonarCloud](https://sonarcloud.io/dashboard?id=Javier-DlaP_IntroUnitTesting_calculatorExample&branch=master)
-- [CK](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(CK_report)*
-- [CKJM](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(Step 7.2)*
+## Execution Model
 
-#### - complexNumber ![codecov](.github/badges/badge_complexNumber.svg)
-- Hamcrest
-- JUnit
-- [Maven](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml)
-- [Jacoco](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml) *(jacoco-report-complexNumber)*
-- [SonarCloud](https://sonarcloud.io/dashboard?id=Javier-DlaP_IntroUnitTesting_complexNumber&branch=master)
-- [CK](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(CK_report)*
-- [CKJM](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(Step 7.3)*
+Examples are intended to be run manually during class or local practice.
+Automatic CI execution, badge generation, and report publishing are disabled by default.
 
-#### - CucumberTestExample
-- Cucumber
-- JUnit
-- Selenium
-- Sikuli
-- TestNG
-- [Maven](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml)
-- [SonarCloud](https://sonarcloud.io/dashboard?id=Javier-DlaP_IntroUnitTesting_CucumberTestExample&branch=master)
-- [CK](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(CK_report)*
-- [CKJM](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(Step 7.4)*
+## Projects
 
-#### - EasyMockExample
-- EasyMock
-- JUnit
-- [Maven](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml)
-- [SonarCloud](https://sonarcloud.io/dashboard?id=Javier-DlaP_IntroUnitTesting_EasyMockExample&branch=master)
-- [CK](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(CK_report)*
-- [CKJM](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(Step 7.5)*
+### assertions
+- Java assertions basics.
 
-#### - MavenExamples ![codecov](.github/badges/badge_MavenExamples.svg)
-- JUnit
-- [Maven](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml)
-- [Jacoco](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml) *(jacoco-report-MavenExamples)*
-- [SonarCloud](https://sonarcloud.io/dashboard?id=Javier-DlaP_IntroUnitTesting_MavenExamples&branch=master)
-- [CK](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(CK_report)*
-- [CKJM](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(Step 7.6)*
+### calculatorExample
+- JUnit Jupiter fundamentals.
+- Maven + JaCoCo basics.
 
-#### - MockitoATM ![codecov](.github/badges/badge_MockitoATM.svg)
-- Mockito
-- JUnit
-- [Maven](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml)
-- [Jacoco](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml) *(jacoco-report-MockitoATM)*
-- [SonarCloud](https://sonarcloud.io/dashboard?id=Javier-DlaP_IntroUnitTesting_MockitoATM&branch=master)
-- [CK](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(CK_report)*
-- [CKJM](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(Step 7.7)*
+### PITExample
+- Mutation testing with PIT (Pitest).
+- Separate project to teach mutation testing after JUnit foundations.
 
-#### - SeleniumTestExample
-- Selenium
-- JUnit
-- Hamcrest
-- Maven
-- [CK](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(CK_report)*
+### complexNumber
+- Unit testing with Hamcrest + JUnit.
 
-#### - TDDExampleFactorial ![codecov](.github/badges/badge_TDDExampleFactorial.svg)
-- JUnit
-- [Maven](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml)
-- [Jacoco](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/test.yml) *(jacoco-report-TDDExampleFactorial)*
-- [SonarCloud](https://sonarcloud.io/dashboard?id=Javier-DlaP_IntroUnitTesting_TDDExampleFactorial&branch=master)
-- [CK](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(CK_report)*
-- [CKJM](https://github.com/Javier-DlaP/IntroUnitTesting/actions/workflows/metrics.yml) *(Step 7.8)*
+### CucumberTestExample
+- BDD with Cucumber + JUnit Platform.
+- UI-oriented steps with Selenium/Sikuli.
+
+### EasyMockExample
+- Interaction-based testing with EasyMock.
+
+### MavenExamples/AppEx0
+- Basic Maven + JUnit test structure.
+
+### MockitoATM
+- Mocking and behavior verification with Mockito.
+
+### SeleniumTestExample
+- Selenium WebDriver examples (opt-in execution).
+
+### PlaywrightExample
+- Modern browser automation with Playwright (opt-in execution).
+
+### TDDExampleFactorial
+- TDD-oriented incremental example.
+
+## Recommended Local Commands
+
+Run tests for a project:
+
+```bash
+cd code/<ProjectName>
+mvn test
+```
+
+Run mutation testing:
+
+```bash
+cd code/PITExample
+mvn test-compile org.pitest:pitest-maven:mutationCoverage
+```
+
+Build slides:
+
+```bash
+latexmk -pdf -interaction=nonstopmode slides.tex
+```
+
+## License
+
+This repository is licensed under
+Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+
+See `LICENSE` for details.
+
+## PDF Release Policy
+
+Generated PDFs (for example, `slides.pdf`) are ignored by default.
+
+Only publish a PDF for major versions by committing it under `releases/`, for example:
+
+```bash
+mkdir -p releases
+cp slides.pdf releases/slides-v2.0.pdf
+git add releases/slides-v2.0.pdf
+```

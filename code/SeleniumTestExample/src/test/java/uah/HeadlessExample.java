@@ -1,7 +1,7 @@
 package uah;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assumptions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,10 +16,11 @@ public class HeadlessExample {
 
   @Test
   void headlessChromeTest1() {
-    System.setProperty("webdriver.chrome.driver", "./src/test/resources/chromedriver");
-
+    Assumptions.assumeTrue(
+        Boolean.parseBoolean(System.getProperty("run.selenium", "false")),
+        "Skipping Selenium test: set -Drun.selenium=true to run");
     ChromeOptions options = new ChromeOptions();
-    options.addArguments("headless");
+    options.addArguments("--headless");
 
     WebDriver driver = new ChromeDriver(options);
     driver.get("https://escuelapolitecnica.uah.es/");
@@ -60,11 +61,12 @@ public class HeadlessExample {
 
   @Test
   void headlessFirefoxTest() {
-    System.setProperty("webdriver.gecko.driver", "./src/test/resources/geckodriver");
-
+    Assumptions.assumeTrue(
+        Boolean.parseBoolean(System.getProperty("run.selenium", "false")),
+        "Skipping Selenium test: set -Drun.selenium=true to run");
     // set Firefox as Headless
     FirefoxOptions options = new FirefoxOptions();
-    options.setHeadless(true);
+    options.addArguments("-headless");
 
     WebDriver driver=new FirefoxDriver(options);  //Instantiate Firefox Driver
     driver.get("https://escuelapolitecnica.uah.es/");

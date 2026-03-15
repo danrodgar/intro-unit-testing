@@ -27,7 +27,15 @@
 *.backup
 *~
 *.ps
+# Ignore generated PDFs by default (slides, reports, etc.)
 *.pdf
+
+# Allow committing PDF artifacts only for major releases
+!releases/
+releases/*
+!releases/*.pdf
+!releases/.gitkeep
+
 *.snm
 *.vrb
 *.class

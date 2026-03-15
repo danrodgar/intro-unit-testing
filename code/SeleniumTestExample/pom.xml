@@ -14,34 +14,38 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <junit.version>6.0.3</junit.version>
+    <maven.surefire.version>3.5.4</maven.surefire.version>
+    <maven.compiler.release>17</maven.compiler.release>
     <sonar.projectKey>Javier-DlaP_IntroUnitTesting</sonar.projectKey>
     <sonar.organization>javier-dlap</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>5.7.0</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine -->
-    <dependency>
-      <groupId>org.junit.vintage</groupId>
-      <artifactId>junit-vintage-engine</artifactId>
-      <version>5.7.0</version>
+      <artifactId>junit-jupiter</artifactId>
       <scope>test</scope>
     </dependency>
 
     <dependency>
         <groupId>org.seleniumhq.selenium</groupId>
         <artifactId>selenium-java</artifactId>
-        <version>4.0.0-alpha-5</version>
+        <version>4.27.0</version>
         <scope>test</scope>
     </dependency>
 
@@ -56,7 +60,8 @@
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>htmlunit-driver</artifactId>
-      <version>2.45.0</version>
+      <version>4.9.0</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -83,10 +88,13 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.0</version>
+          <configuration>
+            <release>${maven.compiler.release}</release>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
+          <version>${maven.surefire.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>

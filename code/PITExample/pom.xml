@@ -1,18 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>testing</groupId>
-    <artifactId>CucumberTest</artifactId>
+    <artifactId>PITExample</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name> CucumberTest</name>
+
     <properties>
         <java.version>17</java.version>
         <junit.version>6.0.3</junit.version>
-        <cucumber.version>7.20.1</cucumber.version>
-        <maven.surefire.version>3.5.4</maven.surefire.version>
         <jacoco.version>0.8.14</jacoco.version>
+        <maven.surefire.version>3.5.4</maven.surefire.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
-        <sonar.projectKey>Javier-DlaP_IntroUnitTesting_CucumberTestExample</sonar.projectKey>
+        <sonar.projectKey>Javier-DlaP_IntroUnitTesting_PITExample</sonar.projectKey>
         <sonar.organization>javier-dlap</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
@@ -30,54 +29,22 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-junit-platform-engine</artifactId>
-            <version>${cucumber.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite</artifactId>
-            <scope>test</scope>
-        </dependency>
-
+        <!-- junit 6 / jupiter -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+        <!-- explicit launcher ensures PIT uses the same Platform version -->
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>4.27.0</version>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.sikulix/sikulixapi -->
-        <dependency>
-            <groupId>com.sikulix</groupId>
-            <artifactId>sikulixapi</artifactId>
-            <version>2.0.5</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.sikuli/sikuli-core -->
-        <dependency>
-            <groupId>org.sikuli</groupId>
-            <artifactId>sikuli-core</artifactId>
-            <version>1.2.2</version>
-            <scope>test</scope>
-        </dependency>
+        
     </dependencies>
+    
     <build>
         <plugins>
             <!-- <plugin>
@@ -85,9 +52,8 @@
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>3.7.0.1746</version>
             </plugin> -->
-
+            
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
@@ -96,11 +62,10 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.version}</version>
             </plugin>
-
+            
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -128,7 +93,33 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-        </plugins>
-    </build>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>1.17.3</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>1.2.1</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <targetClasses>
+                                <param>calculator.*</param>
+                            </targetClasses>
+                            <targetTests>
+                                <param>calculator.*</param>
+                            </targetTests>
+                            <outputFormats>
+                                <outputFormat>HTML</outputFormat>
+                                <outputFormat>XML</outputFormat>
+                            </outputFormats>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
 </project>
